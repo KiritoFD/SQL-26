@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>简易朋友圈平台</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>简易朋友圈平台</h1>
+        <p id="sessionText">未登录</p>
+      </div>
+      <button id="initBtn" class="ghost">初始化数据库</button>
+    </header>
+
+    <main class="layout">
+      <section class="panel auth-panel">
+        <div class="tabs">
+          <button class="tab active" data-tab="userLogin">用户登录</button>
+          <button class="tab" data-tab="adminLogin">管理员登录</button>
+          <button class="tab" data-tab="register">注册</button>
+        </div>
+
+        <form id="userLogin" class="tab-pane active">
+          <label>用户 id<input name="id" value="1001"></label>
+          <label>密码<input name="password" type="password" value="user1001"></label>
+          <button type="submit">用户登录</button>
+        </form>
+
+        <form id="adminLogin" class="tab-pane">
+          <label>管理员 id<input name="id" value="9001"></label>
+          <label>密码<input name="password" type="password" value="admin9001"></label>
+          <button type="submit">管理员登录</button>
+        </form>
+
+        <form id="register" class="tab-pane grid-form">
+          <label>用户 id<input name="user_id"></label>
+          <label>密码<input name="password" type="password"></label>
+          <label>姓名<input name="name"></label>
+          <label>性别
+            <select name="gender">
+              <option>男</option>
+              <option>女</option>
+              <option>其他</option>
+            </select>
+          </label>
+          <label>出生日期<input name="birth_date" type="date"></label>
+          <label>年龄<input name="age" type="number" min="0" max="150"></label>
+          <button type="submit">注册用户</button>
+        </form>
+      </section>
+
+      <section id="userWorkspace" class="workspace hidden">
+        <nav class="side-nav">
+          <button data-view="profileView" class="active">资料</button>
+          <button data-view="friendsView">好友</button>
+          <button data-view="momentsView">朋友圈</button>
+          <button data-view="commentsView">评论</button>
+        </nav>
+
+        <div class="content">
+          <section id="profileView" class="view active">
+            <h2>修改个人信息</h2>
+            <form id="profileForm" class="grid-form">
+              <label>姓名<input name="name" value="张明"></label>
+              <label>性别
+                <select name="gender">
+                  <option>男</option>
+                  <option>女</option>
+                  <option>其他</option>
+                </select>
+              </label>
+              <label>出生日期<input name="birth_date" type="date" value="2004-03-12"></label>
+              <label>年龄<input name="age" type="number" value="22"></label>
+              <button type="submit">保存资料</button>
+            </form>
+          </section>
+
+          <section id="friendsView" class="view">
+            <h2>好友与分组</h2>
+            <form id="searchForm" class="inline-form">
+              <input name="keyword" placeholder="用户 id 或姓名">
+              <button type="submit">搜索用户</button>
+            </form>
+            <form id="addFriendForm" class="inline-form">
+              <input name="friend_user_id" placeholder="好友用户 id">
+              <input name="group_name" placeholder="我的分组，默认分组">
+              <button type="submit">添加好友</button>
+            </form>
+            <form id="groupForm" class="inline-form">
+              <input name="group_name" placeholder="新分组名">
+              <button type="submit">创建分组</button>
+            </form>
+            <form id="moveFriendForm" class="inline-form">
+              <input name="friend_user_id" placeholder="好友用户 id">
+              <input name="group_name" placeholder="目标分组">
+              <button type="submit">移动分组</button>
+            </form>
+            <button id="refreshFriends" class="ghost">刷新好友</button>
+            <div id="friendOutput" class="result"></div>
+          </section>
+
+          <section id="momentsView" class="view">
+            <h2>朋友圈</h2>
+            <form id="momentForm">
+              <textarea name="content" maxlength="280" placeholder="发表 1-280 字朋友圈"></textarea>
+              <button type="submit">发表</button>
+            </form>
+            <form id="editMomentForm" class="inline-form">
+              <input name="moment_id" placeholder="朋友圈 id">
+              <input name="content" placeholder="新内容">
+              <button type="submit">修改我的朋友圈</button>
+            </form>
+            <form id="deleteMomentForm" class="inline-form">
+              <input name="moment_id" placeholder="朋友圈 id">
+              <button type="submit">删除我的朋友圈</button>
+            </form>
+            <div class="button-row">
+              <button id="loadMyMoments" class="ghost">我的朋友圈</button>
+              <button id="loadFriendMoments" class="ghost">好友朋友圈</button>
+            </div>
+            <div id="momentOutput" class="result"></div>
+          </section>
+
+          <section id="commentsView" class="view">
+            <h2>评论</h2>
+            <form id="commentForm" class="inline-form">
+              <input name="moment_id" placeholder="好友朋友圈 id">
+              <input name="content" placeholder="评论内容，1-140 字">
+              <button type="submit">发表评论</button>
+            </form>
+            <form id="loadCommentsForm" class="inline-form">
+              <input name="moment_id" placeholder="朋友圈 id">
+              <button type="submit">查看评论</button>
+            </form>
+            <div id="commentOutput" class="result"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="adminWorkspace" class="workspace hidden">
+        <nav class="side-nav">
+          <button data-view="adminProfileView" class="active">资料</button>
+          <button data-view="adminMomentsView">审核</button>
+          <button data-view="adminLogsView">日志</button>
+        </nav>
+
+        <div class="content">
+          <section id="adminProfileView" class="view active">
+            <h2>修改管理员信息</h2>
+            <form id="adminProfileForm" class="inline-form">
+              <input name="name" value="系统管理员">
+              <input name="phone" value="13800000000">
+              <button type="submit">保存</button>
+            </form>
+          </section>
+
+          <section id="adminMomentsView" class="view">
+            <h2>朋友圈审核</h2>
+            <button id="loadAdminMoments" class="ghost">刷新全部朋友圈</button>
+            <form id="adminDeleteMomentForm" class="inline-form">
+              <input name="moment_id" placeholder="朋友圈 id">
+              <input name="reason" placeholder="删除原因">
+              <button type="submit">审核删除</button>
+            </form>
+            <form id="adminDisableUserForm" class="inline-form">
+              <input name="user_id" placeholder="用户 id">
+              <input name="reason" placeholder="注销原因">
+              <button type="submit">注销用户</button>
+            </form>
+            <div id="adminMomentOutput" class="result"></div>
+          </section>
+
+          <section id="adminLogsView" class="view">
+            <h2>审计日志</h2>
+            <button id="loadAuditLogs" class="ghost">刷新日志</button>
+            <div id="auditOutput" class="result"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast"></div>
+    <script src="/app.js"></script>
+  </body>
+</html>
