@@ -17,4 +17,4 @@ MYSQL_DATABASE = os.getenv("MYSQL_DATABASE", "moments_lab")
 
 WEB_HOST = os.getenv("WEB_HOST", "127.0.0.1")
 WEB_PORT = int(os.getenv("WEB_PORT", "8000"))
-WEB_ROOT = ROOT / "web"
+WEB_ROOT = ROOT / "src" / "web"

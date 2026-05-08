@@ -12,6 +12,7 @@
 - `src/moments/services.py`：业务规则层，包含注册、登录、好友、朋友圈、评论、管理员审核和注销用户。
 - `src/moments/cli.py`：命令行输入输出和菜单，不直接承载业务规则。
 - `src/moments/web.py`：HTTP API、Session、角色校验和静态文件服务，不直接拼写复杂业务事务。
+- `src/web/`：Web 前端静态资源，包含 `index.html`、`styles.css`、`app.js`。
 
 ## 设计原则
 

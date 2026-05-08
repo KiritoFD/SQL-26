@@ -82,6 +82,16 @@ python src/web_app.py
 python -m unittest discover -s tests
 ```
 
+真实 MySQL 集成测试默认跳过。如需验证实际数据库操作，先确认 MySQL 服务和账号可用，然后执行：
+
+```powershell
+$env:RUN_DB_TESTS="1"
+$env:MYSQL_DATABASE="moments_lab_test"
+python -m unittest tests.test_database_integration
+```
+
+该测试会使用 `moments_lab_test`，自动执行建表和初始化数据，并验证真实登录、注册事务、双向好友、朋友圈触发器、评论级联删除、管理员审核视图和审计日志。
+
 语法检查：
 
 ```powershell
@@ -92,5 +102,5 @@ python -m py_compile src/moments_app.py
 
 - `src/moments_app.py` 通过 Python 语法检查。
 - `src/web_app.py` 通过 Python 语法检查。
-- 静态契约、SQL 契约、前端契约和需求对照测试共 20 项通过。
-- 数据库集成测试需要本地 MySQL 服务，验收前应先通过程序菜单执行初始化。
+- 默认测试包含静态契约、SQL 契约、前端契约、需求对照和默认跳过的数据库集成测试。
+- 数据库集成测试需要本地 MySQL 服务，设置 `RUN_DB_TESTS=1` 后会实际操作 `moments_lab_test`。

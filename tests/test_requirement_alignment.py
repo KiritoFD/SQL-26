@@ -1,13 +1,7 @@
 import re
 import unittest
-from pathlib import Path
 
-
-ROOT = Path(__file__).resolve().parents[1]
-
-
-def read(relative_path: str) -> str:
-    return (ROOT / relative_path).read_text(encoding="utf-8")
+from helpers import read, read_many
 
 
 class RequirementAlignmentTests(unittest.TestCase):
@@ -19,9 +13,16 @@ class RequirementAlignmentTests(unittest.TestCase):
         cls.cli = read("src/moments/cli.py")
         cls.services = read("src/moments/services.py")
         cls.web = read("src/moments/web.py")
-        cls.html = read("web/index.html")
-        cls.js = read("web/app.js")
-        cls.all_text = "\n".join([cls.schema, cls.cli, cls.services, cls.web, cls.html, cls.js])
+        cls.html = read("src/web/index.html")
+        cls.js = read("src/web/app.js")
+        cls.all_text = read_many(
+            "sql/schema.sql",
+            "src/moments/cli.py",
+            "src/moments/services.py",
+            "src/moments/web.py",
+            "src/web/index.html",
+            "src/web/app.js",
+        )
 
     def assertCovered(self, requirement_id: str, *markers: str):
         self.assertIn(requirement_id, self.requirements)
@@ -42,7 +43,7 @@ class RequirementAlignmentTests(unittest.TestCase):
     def test_moment_and_comment_requirements_are_implemented(self):
         self.assertCovered("R-MOMENT-001", "create_moment", "chk_moments_content_len", "maxlength=\"280\"")
         self.assertCovered("R-MOMENT-002", "update_moment", "trg_moments_before_update")
-        self.assertCovered("R-MOMENT-003", "delete_moment", "fk_comments_moment", "on delete cascade")
+        self.assertCovered("R-MOMENT-003", "delete_moment", "fk_comments_moment", "ON DELETE CASCADE")
         self.assertCovered("R-MOMENT-004", "v_friend_moments", "comment_count", "loadFriendMoments")
         self.assertCovered("R-COMMENT-001", "comment_moment", "chk_comments_content_len", "trg_comments_after_insert")
 

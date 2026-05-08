@@ -1,21 +1,21 @@
 import unittest
-from pathlib import Path
 
-
-ROOT = Path(__file__).resolve().parents[1]
-
-
-def read(relative_path: str) -> str:
-    return (ROOT / relative_path).read_text(encoding="utf-8")
+from helpers import exists, read
 
 
 class WebContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.entry = read("src/web_app.py")
+        cls.config = read("src/moments/config.py")
         cls.backend = read("src/moments/web.py")
-        cls.html = read("web/index.html")
-        cls.js = read("web/app.js")
+        cls.html = read("src/web/index.html")
+        cls.js = read("src/web/app.js")
+
+    def test_frontend_assets_live_under_src(self):
+        for asset in ["src/web/index.html", "src/web/styles.css", "src/web/app.js"]:
+            self.assertTrue(exists(asset), f"{asset} should exist")
+        self.assertIn('ROOT / "src" / "web"', self.config)
 
     def test_backend_exposes_required_api_routes(self):
         for route in [

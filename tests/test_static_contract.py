@@ -1,15 +1,14 @@
 import unittest
-from pathlib import Path
 
-
-ROOT = Path(__file__).resolve().parents[1]
+from helpers import read, read_many
 
 
 class StaticContractTests(unittest.TestCase):
     def read_file(self, relative_path: str) -> str:
-        path = ROOT / relative_path
-        self.assertTrue(path.exists(), f"{relative_path} should exist")
-        return path.read_text(encoding="utf-8")
+        try:
+            return read(relative_path)
+        except FileNotFoundError:
+            self.fail(f"{relative_path} should exist")
 
     def test_requirement_documents_exist(self):
         requirements = self.read_file("docs/requirements.md")
@@ -72,13 +71,11 @@ class StaticContractTests(unittest.TestCase):
         self.assertIn("INSERT INTO comments", seed)
 
     def test_cli_program_contract(self):
-        app = "\n".join(
-            [
-                self.read_file("src/moments_app.py"),
-                self.read_file("src/moments/cli.py"),
-                self.read_file("src/moments/services.py"),
-                self.read_file("src/moments/sql_runner.py"),
-            ]
+        app = read_many(
+            "src/moments_app.py",
+            "src/moments/cli.py",
+            "src/moments/services.py",
+            "src/moments/sql_runner.py",
         )
 
         for marker in [
@@ -98,11 +95,9 @@ class StaticContractTests(unittest.TestCase):
         ]:
             self.assertIn(marker, app)
 
-        infrastructure = "\n".join(
-            [
-                self.read_file("src/moments/db.py"),
-                self.read_file("src/moments/sql_runner.py"),
-            ]
+        infrastructure = read_many(
+            "src/moments/db.py",
+            "src/moments/sql_runner.py",
         )
         for marker in ["commit()", "rollback()", "mysql.connector"]:
             self.assertIn(marker, infrastructure)
