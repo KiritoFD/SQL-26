@@ -6,6 +6,8 @@ USE moments_lab;
 
 DROP TRIGGER IF EXISTS trg_moments_before_update;
 DROP TRIGGER IF EXISTS trg_comments_after_insert;
+DROP TRIGGER IF EXISTS trg_friendships_before_insert;
+DROP TRIGGER IF EXISTS trg_friendships_before_update;
 
 CREATE TABLE IF NOT EXISTS users (
   user_id INT PRIMARY KEY,
@@ -46,7 +48,6 @@ CREATE TABLE IF NOT EXISTS friendships (
   group_id INT NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, friend_user_id),
-  CONSTRAINT chk_friendships_not_self CHECK (user_id <> friend_user_id),
   CONSTRAINT fk_friendships_user
     FOREIGN KEY (user_id) REFERENCES users(user_id)
     ON DELETE CASCADE ON UPDATE CASCADE,
@@ -132,6 +133,24 @@ FOR EACH ROW
 BEGIN
   IF NEW.content <> OLD.content THEN
     SET NEW.updated_at = CURRENT_TIMESTAMP;
+  END IF;
+END$$
+
+CREATE TRIGGER trg_friendships_before_insert
+BEFORE INSERT ON friendships
+FOR EACH ROW
+BEGIN
+  IF NEW.user_id = NEW.friend_user_id THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'cannot add self as friend';
+  END IF;
+END$$
+
+CREATE TRIGGER trg_friendships_before_update
+BEFORE UPDATE ON friendships
+FOR EACH ROW
+BEGIN
+  IF NEW.user_id = NEW.friend_user_id THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'cannot add self as friend';
   END IF;
 END$$
 

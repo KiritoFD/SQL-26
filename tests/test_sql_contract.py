@@ -32,10 +32,11 @@ class SqlContractTests(unittest.TestCase):
     def test_friendship_constraints_make_relationships_valid(self):
         friendships = self.table_block("friendships")
         self.assertIn("primary key (user_id, friend_user_id)", friendships)
-        self.assertIn("chk_friendships_not_self", friendships)
         self.assertIn("references users(user_id)", friendships)
         self.assertIn("references friend_groups(group_id)", friendships)
         self.assertIn("on delete cascade", friendships)
+        self.assertIn("create trigger trg_friendships_before_insert", SCHEMA_LOWER)
+        self.assertIn("cannot add self as friend", SCHEMA_LOWER)
 
     def test_moment_and_comment_limits_and_cascade(self):
         moments = self.table_block("moments")

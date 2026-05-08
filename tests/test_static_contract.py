@@ -57,6 +57,7 @@ class StaticContractTests(unittest.TestCase):
         self.assertIn("create or replace view v_friend_moments", schema)
         self.assertIn("create trigger trg_moments_before_update", schema)
         self.assertIn("create trigger trg_comments_after_insert", schema)
+        self.assertIn("create trigger trg_friendships_before_insert", schema)
         self.assertIn("on delete cascade", schema)
         self.assertIn("check", schema)
 
