@@ -27,6 +27,19 @@ class StaticContractTests(unittest.TestCase):
         for marker in ["TC-001", "TC-008", "TC-018", "TC-024"]:
             self.assertIn(marker, test_plan)
 
+    def test_source_is_split_by_responsibility(self):
+        for module in [
+            "src/moments/config.py",
+            "src/moments/db.py",
+            "src/moments/sql_runner.py",
+            "src/moments/services.py",
+            "src/moments/cli.py",
+            "src/moments/web.py",
+            "src/moments_app.py",
+            "src/web_app.py",
+        ]:
+            self.read_file(module)
+
     def test_schema_contains_required_tables_views_and_triggers(self):
         schema = self.read_file("sql/schema.sql").lower()
 
@@ -59,7 +72,14 @@ class StaticContractTests(unittest.TestCase):
         self.assertIn("INSERT INTO comments", seed)
 
     def test_cli_program_contract(self):
-        app = self.read_file("src/moments_app.py")
+        app = "\n".join(
+            [
+                self.read_file("src/moments_app.py"),
+                self.read_file("src/moments/cli.py"),
+                self.read_file("src/moments/services.py"),
+                self.read_file("src/moments/sql_runner.py"),
+            ]
+        )
 
         for marker in [
             "def initialize_database",
@@ -78,8 +98,29 @@ class StaticContractTests(unittest.TestCase):
         ]:
             self.assertIn(marker, app)
 
+        infrastructure = "\n".join(
+            [
+                self.read_file("src/moments/db.py"),
+                self.read_file("src/moments/sql_runner.py"),
+            ]
+        )
         for marker in ["commit()", "rollback()", "mysql.connector"]:
-            self.assertIn(marker, app)
+            self.assertIn(marker, infrastructure)
+
+    def test_entry_points_are_thin(self):
+        cli_entry = self.read_file("src/moments_app.py")
+        web_entry = self.read_file("src/web_app.py")
+        self.assertLessEqual(len(cli_entry.splitlines()), 24)
+        self.assertLessEqual(len(web_entry.splitlines()), 28)
+        for marker in ["run_cli", "run_server"]:
+            self.assertIn(marker, cli_entry + web_entry)
+        for marker in ["MYSQL_USER", "MYSQL_PASSWORD", "MYSQL_DATABASE"]:
+            self.assertIn(marker, cli_entry + web_entry)
+
+    def test_services_own_business_rules(self):
+        services = self.read_file("src/moments/services.py")
+        for marker in ["ServiceError", "Session", "db.transaction", "DELETE_MOMENT", "DISABLE_USER"]:
+            self.assertIn(marker, services)
 
 
 if __name__ == "__main__":

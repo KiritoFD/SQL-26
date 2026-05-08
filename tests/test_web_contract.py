@@ -12,7 +12,8 @@ def read(relative_path: str) -> str:
 class WebContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.backend = read("src/web_app.py")
+        cls.entry = read("src/web_app.py")
+        cls.backend = read("src/moments/web.py")
         cls.html = read("web/index.html")
         cls.js = read("web/app.js")
 
@@ -75,6 +76,10 @@ class WebContractTests(unittest.TestCase):
         self.assertIn("require_role", self.backend)
         self.assertIn("HTTPStatus.FORBIDDEN", self.backend)
         self.assertIn("HTTPStatus.UNAUTHORIZED", self.backend)
+
+    def test_web_entry_contains_demo_configuration_defaults(self):
+        for marker in ["MYSQL_USER", "MYSQL_PASSWORD", "MYSQL_DATABASE", "WEB_PORT", "run_server"]:
+            self.assertIn(marker, self.entry)
 
 
 if __name__ == "__main__":

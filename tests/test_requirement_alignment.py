@@ -16,11 +16,12 @@ class RequirementAlignmentTests(unittest.TestCase):
         cls.requirements = read("docs/requirements.md")
         cls.schema = read("sql/schema.sql").lower()
         cls.seed = read("sql/seed.sql")
-        cls.cli = read("src/moments_app.py")
-        cls.web = read("src/web_app.py")
+        cls.cli = read("src/moments/cli.py")
+        cls.services = read("src/moments/services.py")
+        cls.web = read("src/moments/web.py")
         cls.html = read("web/index.html")
         cls.js = read("web/app.js")
-        cls.all_text = "\n".join([cls.schema, cls.cli, cls.web, cls.html, cls.js])
+        cls.all_text = "\n".join([cls.schema, cls.cli, cls.services, cls.web, cls.html, cls.js])
 
     def assertCovered(self, requirement_id: str, *markers: str):
         self.assertIn(requirement_id, self.requirements)
@@ -28,7 +29,7 @@ class RequirementAlignmentTests(unittest.TestCase):
             self.assertIn(marker, self.all_text, f"{requirement_id} missing marker: {marker}")
 
     def test_user_requirements_are_implemented(self):
-        self.assertCovered("R-USER-001", "register_user", "默认分组", "start_transaction")
+        self.assertCovered("R-USER-001", "register_user", "默认分组", "db.transaction")
         self.assertCovered("R-USER-002", "login_user", "status = 'active'", "/api/login/user")
         self.assertCovered("R-USER-003", "update_user_profile", "/api/profile", "chk_users_age")
 
