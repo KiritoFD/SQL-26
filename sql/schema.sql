@@ -4,6 +4,9 @@ CREATE DATABASE IF NOT EXISTS moments_lab
 
 USE moments_lab;
 
+DROP TRIGGER IF EXISTS trg_moments_before_update;
+DROP TRIGGER IF EXISTS trg_comments_after_insert;
+
 CREATE TABLE IF NOT EXISTS users (
   user_id INT PRIMARY KEY,
   password_hash CHAR(64) NOT NULL,
