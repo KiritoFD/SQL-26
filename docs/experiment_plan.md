@@ -101,3 +101,4 @@
 - 2026-05-08：根据开发顺序调整，先补充 `docs/requirements.md` 完成需求拆解和要求确认，再编写测试计划，最后进入实现。
 - 2026-05-08：完成 `sql/schema.sql`、`sql/seed.sql` 草案和 `docs/database_design.md`，数据库对象已覆盖表、约束、视图、触发器和初始化数据。
 - 2026-05-08：完成 `src/moments_app.py` 命令行程序和 `docs/usage.md`，静态契约测试与语法检查通过。
+- 2026-05-08：补充 `src/web_app.py` 与 `web/` 前端页面，并扩展测试到 20 项，新增 `docs/requirement_traceability.md` 逐项对照实验要求。
